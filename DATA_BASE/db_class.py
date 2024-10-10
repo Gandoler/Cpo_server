@@ -25,7 +25,7 @@ class DB_class:
     def get_today_birthdays(self):
         today = datetime.datetime.today().strftime('%m-%d')
         query = """
-            SELECT telegram_id, name, interests 
+            SELECT telegram_id, friend_username, name, interests 
             FROM users 
             WHERE DATE_FORMAT(birthday, '%m-%d') = %s AND is_congratulated = FALSE
         """

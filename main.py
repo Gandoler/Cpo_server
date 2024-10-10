@@ -1,35 +1,52 @@
 import asyncio
+import schedule
 from DATA_BASE import db_class
 from TELEGRAM import Telegram_class
 from CHAT import gpt_class
 
-
-async def main():
-    DB = db_class.DB_class()  # Убедитесь, что вы вызываете конструктор
-    GPT = gpt_class.gpt_class()  # Убедитесь, что вы вызываете конструктор
-    TG = Telegram_class.Telegram_class()  # Убедитесь, что вы вызываете конструктор
+async def func_cong(DB, GPT, TG):
     try:
-        users = DB.get_today_birthdays()
-        print(f"Найдено {len(users)} пользователей с днём рождения сегодня.")
+        friends = DB.get_today_birthdays()
+        print(f"Найдено {len(friends)} пользователей с днём рождения сегодня.")
 
-        for user in users:
-            interests = (lambda interests: interests if interests else "Придумай ему увлечения")(user['interests'])
-            message = GPT.generate_congratulation(user['name'], interests)
-            # message = "C DR"
+        for friend in friends:
+            interests = (lambda interests: interests if interests else "Придумай ему увлечения")(friend['interests'])
+            message_point = str(friend['friend_username'])
+            message_text = GPT.generate_congratulation(friend['name'], interests)
+
             try:
-                await TG.send_congratulation(user['telegram_id'], message)  # Используйте await для асинхронного вызова
-                DB.update_congratulated(user['telegram_id'])
-            except Exception as e:
-                print(f"Не удалось отправить сообщение пользователю {user['telegram_id']}: {e}")
+                await TG.send_congratulation(friend['telegram_id'], message_point)
+                await TG.send_congratulation(friend['telegram_id'], message_text)
 
-        DB.conn.commit()  # Сохраняем изменения через экземпляр DB
+                # DB.update_congratulated(friend['telegram_id'])
+            except Exception as e:
+                print(f"Не удалось отправить сообщение пользователю {friend['telegram_id']}: {e}")
+
+        DB.conn.commit()
 
     except Exception as e:
         print(f"Произошла ошибка: {e}")
-        DB.conn.rollback()  # Откат изменений
+        DB.conn.rollback()
     finally:
-        DB.close()  # Закрываем соединение
+        DB.close()
 
-# Запуск основного асинхронного метода
+async def run_schedule():
+    while True:
+        schedule.run_pending()
+        await asyncio.sleep(1)
+
+def schedule_congratulations():
+    DB = db_class.DB_class()
+    GPT = gpt_class.gpt_class()
+    TG = Telegram_class.Telegram_class()
+    asyncio.create_task(func_cong(DB, GPT, TG))
+
+async def main():
+    # Запланировать выполнение каждый день в 9 утра
+    schedule.every().day.at("16:57").do(schedule_congratulations)
+
+    # Запуск основного цикла планировщика
+    await run_schedule()
+
 if __name__ == "__main__":
     asyncio.run(main())

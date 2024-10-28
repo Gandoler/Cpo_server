@@ -1,12 +1,24 @@
 import requests
 from JSON_DATA import JSON_DATA_LOADER
-
+import random
 
 class gpt_class:
     def __init__(self):
         self.data = JSON_DATA_LOADER.load_config()
         if self.data:
             self.api_key = self.data.get("CHATIK")  # Ваш ключ API
+    @staticmethod
+    def birthday_greeting(name):
+        greetings = [
+            f"С днём рождения, {name}! Пусть каждый день будет наполнен счастьем и улыбками!",
+            f"Поздравляю с днём рождения, {name}! Пусть все мечты сбываются, а впереди ждёт только радость!",
+            f"Дорогой {name}, с днём рождения! Желаю много счастья, здоровья и успехов!",
+            f"{name}, поздравляю с твоим праздником! Пусть каждый момент будет незабываемым, а каждый день – лучшим!",
+            f"Счастья, любви и удачи тебе, {name}! С днём рождения! Пусть в твоей жизни будет много ярких событий!",
+            f"{name}, желаю тебе невероятного дня рождения! Пусть жизнь радует тебя сюрпризами и возможностями!",
+            f"С днём рождения, {name}! Пусть всегда рядом будут верные друзья, а удача сопровождает во всем!",
+        ]
+        return random.choice(greetings)
 
     def generate_congratulation(self, name, interests):
         prompt = f"Write congratulations for {name}, that interested {interests}. congratulations must be friendly."

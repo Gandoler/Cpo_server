@@ -12,7 +12,8 @@ async def func_cong(DB, GPT, TG):
         for friend in friends:
             interests = (lambda interests: interests if interests else "Придумай ему увлечения")(friend['interests'])
             message_point = str(friend['friend_username'])
-            message_text = GPT.generate_congratulation(friend['name'], interests)
+            #message_text = GPT.generate_congratulation(friend['name'], interests)
+            message_text=GPT.birthday_greeting(friend['name'])
 
             try:
                 await TG.send_congratulation(friend['telegram_id'], message_point)
@@ -43,7 +44,7 @@ def schedule_congratulations():
 
 async def main():
     # Запланировать выполнение каждый день в 9 утра
-    schedule.every().day.at("16:57").do(schedule_congratulations)
+    schedule.every().day.at("14:36").do(schedule_congratulations)
 
     # Запуск основного цикла планировщика
     await run_schedule()

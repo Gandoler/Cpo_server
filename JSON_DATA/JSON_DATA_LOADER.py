@@ -1,14 +1,17 @@
 import json
 import os
 
+
+
+
 def load_config(filename='config.json'):
     """Загружает конфигурацию из файла JSON или создает новый, если файл не существует."""
     # Данные по умолчанию для конфигурации
     default_config = {
-        "host": "sql8.freesqldatabase.com",
-        "user": "sql8736496",
-        "password": "acEaTnWs46",
-        "database": "sql8736496",
+        "host": "sql7.freesqldatabase.com",
+        "user": "sql7741061",
+        "password": "HrHJdZ7tsF",
+        "database": "sql7741061",
         "TELEGRAM_BOT_TOKEN": "8182804011:AAG3p5xpywAWD0nNLBgaNvIGg1TC-O7vWY0",
         "CHATIK": "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"
     }
